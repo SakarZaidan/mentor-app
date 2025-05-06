@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor - Pomodoro Timer</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Grand+Hotel&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(45deg, #833AB4, #FD1D1D, #FCB045);
+            --primary-blue: #0A66C2;
+            --primary-black: #000000;
+            --vibrant-pink: #FF3366;
+            --vibrant-blue: #00F2EA;
+            --vibrant-purple: #5851DB;
+            --vibrant-red: #FE2C55;
+            --dark-gray: #262626;
+            --medium-gray: #8E8E8E;
+            --light-gray: #EFEFEF;
+            --off-white: #FAFAFA;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--off-white);
+        }
+
+        .dark {
+            --off-white: #121212;
+            --light-gray: #1E1E1E;
+            --medium-gray: #B0B0B0;
+            --dark-gray: #FFFFFF;
+        }
+
+        .logo-font {
+            font-family: 'Grand Hotel', cursive;
+        }
+
+        .gradient-bg {
+            background: var(--primary-gradient);
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 0;
+        }
+
+        .timer-circle {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: conic-gradient(#FE2C55 0% 75%, #E5E7EB 75% 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer-circle::before {
+            content: '';
+            position: absolute;
+            width: 90%;
+            height: 90%;
+            border-radius: 50%;
+            background-color: white;
+        }
+
+        .dark .timer-circle::before {
+            background-color: #1F2937;
+        }
+
+        .timer-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .timer-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .timer-button:hover {
+            transform: scale(1.05);
+        }
+
+        .timer-button:active {
+            transform: scale(0.95);
+        }
+
+        .session-card {
+            transition: all 0.3s ease;
+        }
+
+        .session-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            background-color: var(--light-gray);
+        }
+
+        .progress-value {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .tab-active {
+            color: var(--dark-gray);
+            border-bottom: 2px solid var(--dark-gray);
+            font-weight: 600;
+        }
+
+        .dark .tab-active {
+            color: white;
+            border-bottom: 2px solid white;
+        }
+
+        .tab-inactive {
+            color: var(--medium-gray);
+            border-bottom: 2px solid transparent;
+        }
+
+        .focus-stat-card {
+            transition: all 0.3s ease;
+        }
+
+        .focus-stat-card:hover {
+            transform: translateY(-4px);
+        }
+
+        @media (max-width: 640px) {
+            .timer-circle {
+                width: 250px;
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body class="text-dark-gray">
+    <!-- Mobile Header -->
+    <header class="md:hidden bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-10">
+        <div class="flex justify-between items-center px-4 py-3">
+            <h1 class="logo-font text-3xl">Mentor</h1>
+            <div class="flex items-center space-x-4">
+                <button>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                </button>
+                <button>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Desktop Layout -->
+    <div class="flex h-screen">
+        <!-- Sidebar Navigation (Desktop Only) -->
+        <aside class="hidden md:flex w-64 bg-white dark:bg-gray-900 shadow-md flex-col h-full">
+            <div class="p-4">
+                <h1 class="logo-font text-3xl">Mentor</h1>
+            </div>
+            <nav class="flex-1 px-2 py-4 space-y-2">
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Social Feed
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                    Todo List
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    Projects
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Pomodoro
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                    Community
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    </svg>
+                    Achievements
+                </a>
+            </nav>
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-medium">
+                        JD
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium">John Doe</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Level 12 • Web Dev</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+                <!-- Header with Actions -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
+                    <div>
+                        <h1 class="text-2xl font-bold mb-1">Pomodoro Timer</h1>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Stay focused and boost your productivity</p>
+                    </div>
+                    <div class="flex items-center space-x-2 mt-4 sm:mt-0">
+                        <button class="flex items-center px-3 py-2 bg-white dark:bg-gray-900 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            Settings
+                        </button>
+                        <button class="flex items-center px-3 py-2 bg-indigo-600 rounded-lg shadow-sm text-sm font-medium text-white hover:bg-indigo-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                            New Task
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Timer Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    <!-- Timer Column -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6">
+                            <!-- Timer Mode Tabs -->
+                            <div class="flex justify-center space-x-8 mb-8">
+                                <button class="py-2 px-1 tab-active">
+                                    Focus
+                                </button>
+                                <button class="py-2 px-1 tab-inactive">
+                                    Short Break
+                                </button>
+                                <button class="py-2 px-1 tab-inactive">
+                                    Long Break
+                                </button>
+                            </div>
+
+                            <!-- Timer Circle -->
+                            <div class="flex justify-center mb-8">
+                                <div class="timer-circle">
+                                    <div class="timer-content">
+                                        <h2 class="text-5xl font-bold mb-2">18:45</h2>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">of 25:00</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Timer Controls -->
+                            <div class="flex justify-center items-center space-x-4">
+                                <button class="timer-button bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z" />
+                                    </svg>
+                                </button>
+                                <button class="timer-button bg-red-500 text-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </button>
+                                <button class="timer-button bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <!-- Current Task -->
+                            <div class="mt-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-sm font-medium">Current Task</h3>
+                                    <button class="text-xs text-indigo-600 dark:text-indigo-400 font-medium hover:text-indigo-800 dark:hover:text-indigo-300">
+                                        Change
+                                    </button>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-2 h-10 bg-red-500 rounded-full mr-3"></div>
+                                    <div>
+                                        <p class="font-medium">Complete React tutorial section 3</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Web Development • High Priority</p>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span>Pomodoros: 2/4</span>
+                                        <span>50%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-value bg-red-500" style="width: 50%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Column -->
+                    <div>
+                        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 mb-6">
+                            <h3 class="text-lg font-semibold mb-4">Today's Stats</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="focus-stat-card bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                                    <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Focus Time</p>
+                                    <p class="text-xl font-bold">1h 45m</p>
+                                </div>
+                                <div class="focus-stat-card bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+                                    <div class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Completed</p>
+                                    <p class="text-xl font-bold">4 tasks</p>
+                                </div>
+                                <div class="focus-stat-card bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+                                    <div class="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Pomodoros</p>
+                                    <p class="text-xl font-bold">7</p>
+                                </div>
+                                <div class="focus-stat-card bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg">
+                                    <div class="w-10 h-10 rounded-full bg-yellow-100 dark:bg-yellow-900 flex items-center justify-center mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-600 dark:text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Streak</p>
+                                    <p class="text-xl font-bold">5 days</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Task Queue -->
+                        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold">Task Queue</h3>
+                                <button class="text-sm text-indigo-600 dark:text-indigo-400 font-medium hover:text-indigo-800 dark:hover:text-indigo-300">
+                                    View All
+                                </button>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <div class="flex items-center mb-1">
+                                        <div class="w-2 h-6 bg-red-500 rounded-full mr-3"></div>
+                                        <p class="font-medium">Complete React tutorial section 3</p>
+                                    </div>
+                                    <div class="flex justify-between items-center ml-5">
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">2/4 pomodoros</p>
+                                        <span class="text-xs bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-2 py-1 rounded-full">In Progress</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <div class="flex items-center mb-1">
+                                        <div class="w-2 h-6 bg-yellow-500 rounded-full mr-3"></div>
+                                        <p class="font-medium">Study JavaScript advanced concepts</p>
+                                    </div>
+                                    <div class="flex justify-between items-center ml-5">
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">0/3 pomodoros</p>
+                                        <span class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full">Queued</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <div class="flex items-center mb-1">
+                                        <div class="w-2 h-6 bg-green-500 rounded-full mr-3"></div>
+                                        <p class="font-medium">Prepare presentation for team meeting</p>
+                                    </div>
+                                    <div class="flex justify-between items-center ml-5">
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">0/2 pomodoros</p>
+                                        <span class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full">Queued</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="mt-4 w-full flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                                Add Task
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Sessions -->
+                <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden mb-6">
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                        <h2 class="font-semibold text-lg">Recent Sessions</h2>
+                        <button class="text-sm text-indigo-600 dark:text-indigo-400 font-medium hover:text-indigo-800 dark:hover:text-indigo-300">
+                            View All
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                            Task
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                            Date
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                            Duration
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                            Status
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="w-2 h-6 bg-red-500 rounded-full mr-3"></div>
+                                                <div>
+                                                    <div class="text-sm font-medium">Complete React tutorial section 3</div>
+                                                    <div class="text-xs text-gray-500 dark:text-gray-400">Web Development</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm">Today</div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400">10:30 AM</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm">25 min</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
+                                                Completed
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="w-2 h-6 bg-red-500 rounded-full mr-3"></div>
+                                                <div>
+                                                    <div class="text-sm font-medium">Complete React tutorial section 3</div>
+                                                    <div class="text-xs text-gray-500 dark:text-gray-400">Web Development</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm">Today</div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400">9:45 AM</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm">25 min</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
+                                                Completed
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="w-2 h-6 bg-blue-500 rounded-full mr-3"></div>
+                                                <div>
+                                                    <div class="text-sm font-medium">Check emails and respond to urgent ones</div>
+                                                    <div class="text-xs text-gray-500 dark:text-gray-400">Admin</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm">Today</div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400">9:00 AM</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm">25 min</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
+                                                Completed
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="w-2 h-6 bg-purple-500 rounded-full mr-3"></div>
+                                                <div>
+                                                    <div class="text-sm font-medium">Portfolio Website Design</div>
+                                                    <div class="text-xs text-gray-500 dark:text-gray-400">Design</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm">Yesterday</div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400">4:15 PM</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm">25 min</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
+                                                Completed
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="w-2 h-6 bg-purple-500 rounded-full mr-3"></div>
+                                                <div>
+                                                    <div class="text-sm font-medium">Portfolio Website Design</div>
+                                                    <div class="text-xs text-gray-500 dark:text-gray-400">Design</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm">Yesterday</div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400">3:30 PM</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm">25 min</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200">
+                                                Interrupted
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Focus Analytics -->
+                <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                        <h2 class="font-semibold text-lg">Focus Analytics</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Weekly Focus Chart -->
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-4">Weekly Focus Time</h3>
+                                <div class="h-64 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-end justify-between p-4">
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-8 bg-indigo-500 rounded-t-lg" style="height: 30%"></div>
+                                        <span class="text-xs mt-2">Mon</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-8 bg-indigo-500 rounded-t-lg" style="height: 60%"></div>
+                                        <span class="text-xs mt-2">Tue</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-8 bg-indigo-500 rounded-t-lg" style="height: 45%"></div>
+                                        <span class="text-xs mt-2">Wed</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-8 bg-indigo-500 rounded-t-lg" style="height: 80%"></div>
+                                        <span class="text-xs mt-2">Thu</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-8 bg-indigo-500 rounded-t-lg" style="height: 75%"></div>
+                                        <span class="text-xs mt-2">Fri</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-8 bg-indigo-500 rounded-t-lg" style="height: 25%"></div>
+                                        <span class="text-xs mt-2">Sat</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-8 bg-indigo-500 rounded-t-lg" style="height: 20%"></div>
+                                        <span class="text-xs mt-2">Sun</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Focus Distribution -->
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-4">Focus Distribution by Category</h3>
+                                <div class="h-64 bg-gray-50 dark:bg-gray-800 rounded-lg p-4 flex items-center justify-center">
+                                    <div class="w-48 h-48 rounded-full border-8 border-indigo-500 relative">
+                                        <div class="absolute inset-0 border-8 border-transparent border-t-red-500 rounded-full transform -rotate-45"></div>
+                                        <div class="absolute inset-0 border-8 border-transparent border-l-yellow-500 border-b-yellow-500 rounded-full transform rotate-45"></div>
+                                        <div class="absolute inset-0 flex items-center justify-center">
+                                            <div class="w-32 h-32 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center">
+                                                <div class="text-center">
+                                                    <p class="text-sm font-medium">Total</p>
+                                                    <p class="text-xl font-bold">8h 15m</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-4 grid grid-cols-3 gap-2">
+                                    <div class="flex items-center">
+                                        <div class="w-3 h-3 bg-indigo-500 rounded-full mr-2"></div>
+                                        <span class="text-xs">Coding (40%)</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
+                                        <span class="text-xs">Design (25%)</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
+                                        <span class="text-xs">Learning (35%)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex justify-around z-10">
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <span class="text-xs mt-1">Home</span>
+        </a>
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            </svg>
+            <span class="text-xs mt-1">Tasks</span>
+        </a>
+        <a href="#" class="bottom-nav-item">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center -mt-5 shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+            </div>
+        </a>
+        <a href="#" class="bottom-nav-item text-indigo-600 dark:text-indigo-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span class="text-xs mt-1">Pomodoro</span>
+        </a>
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <div class="relative">
+                <img class="h-6 w-6 rounded-full" src="https://via.placeholder.com/24" alt="Profile">
+            </div>
+            <span class="text-xs mt-1">Profile</span>
+        </a>
+    </nav>
+
+    <script>
+        // This would be implemented with a proper framework like React
+        // Just showing the structure here
+    </script>
+</body>
+</html>

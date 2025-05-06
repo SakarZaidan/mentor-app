@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Grand+Hotel&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(45deg, #833AB4, #FD1D1D, #FCB045);
+            --primary-blue: #0A66C2;
+            --primary-black: #000000;
+            --vibrant-pink: #FF3366;
+            --vibrant-blue: #00F2EA;
+            --vibrant-purple: #5851DB;
+            --vibrant-red: #FE2C55;
+            --dark-gray: #262626;
+            --medium-gray: #8E8E8E;
+            --light-gray: #EFEFEF;
+            --off-white: #FAFAFA;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--off-white);
+        }
+
+        .dark {
+            --off-white: #121212;
+            --light-gray: #1E1E1E;
+            --medium-gray: #B0B0B0;
+            --dark-gray: #FFFFFF;
+        }
+
+        .logo-font {
+            font-family: 'Grand Hotel', cursive;
+        }
+
+        .story-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            padding: 3px;
+            background: var(--primary-gradient);
+        }
+
+        .story-circle-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .gradient-bg {
+            background: var(--primary-gradient);
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 0;
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .progress-ring-circle {
+            stroke-dasharray: 283;
+            stroke-dashoffset: 0;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.35s;
+            transform-origin: 50% 50%;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .skill-progress {
+            height: 6px;
+            border-radius: 3px;
+            background-color: var(--light-gray);
+        }
+
+        .skill-progress-bar {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 640px) {
+            .story-circle {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body class="text-dark-gray">
+    <!-- Mobile Header -->
+    <header class="md:hidden bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-10">
+        <div class="flex justify-between items-center px-4 py-3">
+            <h1 class="logo-font text-3xl">Mentor</h1>
+            <div class="flex items-center space-x-4">
+                <button>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                </button>
+                <button>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Desktop Layout -->
+    <div class="hidden md:flex h-screen">
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 bg-white dark:bg-gray-900 shadow-md flex flex-col h-full">
+            <div class="p-4">
+                <h1 class="logo-font text-3xl">Mentor</h1>
+            </div>
+            <nav class="flex-1 px-2 py-4 space-y-2">
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Social Feed
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                    Todo List
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    Projects
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Pomodoro
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                    Community
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    </svg>
+                    Achievements
+                </a>
+            </nav>
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-medium">
+                        JD
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium">John Doe</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Level 12 • Web Dev</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h1 class="text-2xl font-bold">Dashboard</h1>
+                    <div class="flex items-center space-x-4">
+                        <button class="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                        </button>
+                        <button class="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stories Section -->
+                <div class="mb-8">
+                    <h2 class="text-lg font-semibold mb-4">Your Learning Paths</h2>
+                    <div class="flex space-x-4 overflow-x-auto pb-2">
+                        <div class="flex flex-col items-center">
+                            <div class="story-circle mb-2">
+                                <div class="story-circle-inner">
+                                    <img src="https://via.placeholder.com/70" alt="Web Dev" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <span class="text-xs font-medium">Web Dev</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="story-circle mb-2">
+                                <div class="story-circle-inner">
+                                    <img src="https://via.placeholder.com/70" alt="UX Design" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <span class="text-xs font-medium">UX Design</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="story-circle mb-2">
+                                <div class="story-circle-inner">
+                                    <img src="https://via.placeholder.com/70" alt="Python" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <span class="text-xs font-medium">Python</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="story-circle mb-2">
+                                <div class="story-circle-inner">
+                                    <img src="https://via.placeholder.com/70" alt="Photography" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <span class="text-xs font-medium">Photography</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="story-circle mb-2">
+                                <div class="story-circle-inner">
+                                    <img src="https://via.placeholder.com/70" alt="Guitar" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <span class="text-xs font-medium">Guitar</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="story-circle mb-2 opacity-60">
+                                <div class="story-circle-inner flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <span class="text-xs font-medium">Add New</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 transition duration-300 card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Daily Streak</h3>
+                            <div class="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-orange-500 dark:text-orange-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex items-end justify-between">
+                            <div>
+                                <p class="text-2xl font-bold">16 days</p>
+                                <p class="text-sm text-green-500 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                                    </svg>
+                                    +3 from last week
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 transition duration-300 card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Focus Time</h3>
+                            <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500 dark:text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex items-end justify-between">
+                            <div>
+                                <p class="text-2xl font-bold">3h 45m</p>
+                                <p class="text-sm text-green-500 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                                    </svg>
+                                    +45m from yesterday
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 transition duration-300 card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Tasks Completed</h3>
+                            <div class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 dark:text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex items-end justify-between">
+                            <div>
+                                <p class="text-2xl font-bold">12 / 15</p>
+                                <p class="text-sm text-green-500 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                                    </svg>
+                                    80% completion rate
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 transition duration-300 card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">New Achievements</h3>
+                            <div class="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-500 dark:text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex items-end justify-between">
+                            <div>
+                                <p class="text-2xl font-bold">3 new</p>
+                                <p class="text-sm text-purple-500 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                    </svg>
+                                    View all 27 badges
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Two Column Layout -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Left Column (2/3 width) -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- Today's Tasks -->
+                        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h2 class="text-lg font-semibold">Today's Tasks</h2>
+                                <button class="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300">View All</button>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                    <div class="ml-3 flex-1">
+                                        <p class="text-sm font-medium">Complete React tutorial section 3</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Web Development • High Priority</p>
+                                    </div>
+                                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400">10:00 AM</span>
+                                </div>
+                                <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                    <div class="ml-3 flex-1">
+                                        <p class="text-sm font-medium">Practice guitar chords for 30 minutes</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Music • Medium Priority</p>
+                                    </div>
+                                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400">2:30 PM</span>
+                                </div>
+                                <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" checked>
+                                    <div class="ml-3 flex-1">
+                                        <p class="text-sm font-medium line-through text-gray-400">Read chapter 5 of UX design book</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Design • Low Priority</p>
+                                    </div>
+                                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Completed</span>
+                                </div>
+                                <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                    <div class="ml-3 flex-1">
+                                        <p class="text-sm font-medium">Join Python community voice room</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Programming • Medium Priority</p>
+                                    </div>
+                                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400">7:00 PM</span>
+                                </div>
+                            </div>
+                            <button class="mt-4 w-full flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                                Add New Task
+                            </button>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h2 class="text-lg font-semibold">Recent Activity</h2>
+                                <button class="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300">View All</button>
+                            </div>
+                            <div class="space-y-6">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-10 h-10 rounded-full bg-pink-500 flex items-center justify-center text-white font-medium">
+                                            EM
+                                        </div>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm font-medium">
+                                            <span class="font-semibold">Emma Mitchell</span> commented on your project
+                                            <span class="font-semibold">Portfolio Website</span>
+                                        </p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            "Great progress on the responsive design! I love how you've implemented the navigation."
+                                        </p>
+                                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">2 hours ago</p>
+                                    </div>
+                                </div>
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm font-medium">
+                                            You completed <span class="font-semibold">5 consecutive days</span> of learning
+                                        </p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            You've earned the "Consistent Learner" badge!
+                                        </p>
+                                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Yesterday</p>
+                                    </div>
+                                </div>
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white font-medium">
+                                            JS
+                                        </div>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm font-medium">
+                                            <span class="font-semibold">JavaScript Community</span> is hosting a new voice room
+                                        </p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            "Modern JS Frameworks Comparison" - Starting in 3 hours
+                                        </p>
+                                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Yesterday</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column (1/3 width) -->
+                    <div class="space-y-6">
+                        <!-- Current Focus -->
+                        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6">
+                            <h2 class="text-lg font-semibold mb-4">Current Focus</h2>
+                            <div class="flex items-center justify-center mb-4">
+                                <div class="relative w-32 h-32">
+                                    <svg class="progress-ring" width="120" height="120">
+                                        <circle class="progress-ring-circle" stroke="#E0E7FF" stroke-width="8" fill="transparent" r="45" cx="60" cy="60"/>
+                                        <circle class="progress-ring-circle" stroke="#4F46E5" stroke-width="8" fill="transparent" r="45" cx="60" cy="60" stroke-dashoffset="113"/>
+                                    </svg>
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <div class="text-center">
+                                            <p class="text-2xl font-bold">60%</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Complete</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 class="text-md font-semibold text-center mb-2">Web Development</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 text-center mb-4">Frontend Specialization</p>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span>HTML & CSS</span>
+                                        <span>90%</span>
+                                    </div>
+                                    <div class="skill-progress">
+                                        <div class="skill-progress-bar bg-green-500" style="width: 90%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span>JavaScript</span>
+                                        <span>75%</span>
+                                    </div>
+                                    <div class="skill-progress">
+                                        <div class="skill-progress-bar bg-blue-500" style="width: 75%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span>React</span>
+                                        <span>60%</span>
+                                    </div>
+                                    <div class="skill-progress">
+                                        <div class="skill-progress-bar bg-indigo-500" style="width: 60%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span>UI/UX Design</span>
+                                        <span>45%</span>
+                                    </div>
+                                    <div class="skill-progress">
+                                        <div class="skill-progress-bar bg-purple-500" style="width: 45%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recommended Mentors -->
+                        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6">
+                            <h2 class="text-lg font-semibold mb-4">Recommended Mentors</h2>
+                            <div class="space-y-4">
+                                <div class="flex items-center">
+                                    <img class="h-10 w-10 rounded-full" src="https://via.placeholder.com/40" alt="Sarah Johnson">
+                                    <div class="ml-3 flex-1">
+                                        <p class="text-sm font-medium">Sarah Johnson</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Senior Frontend Developer</p>
+                                    </div>
+                                    <button class="px-3 py-1 text-xs font-medium rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200">
+                                        Connect
+                                    </button>
+                                </div>
+                                <div class="flex items-center">
+                                    <img class="h-10 w-10 rounded-full" src="https://via.placeholder.com/40" alt="Michael Chen">
+                                    <div class="ml-3 flex-1">
+                                        <p class="text-sm font-medium">Michael Chen</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">UX Designer at Google</p>
+                                    </div>
+                                    <button class="px-3 py-1 text-xs font-medium rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200">
+                                        Connect
+                                    </button>
+                                </div>
+                                <div class="flex items-center">
+                                    <img class="h-10 w-10 rounded-full" src="https://via.placeholder.com/40" alt="Alex Rivera">
+                                    <div class="ml-3 flex-1">
+                                        <p class="text-sm font-medium">Alex Rivera</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Full Stack Developer</p>
+                                    </div>
+                                    <button class="px-3 py-1 text-xs font-medium rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200">
+                                        Connect
+                                    </button>
+                                </div>
+                            </div>
+                            <button class="mt-4 w-full flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                View All Mentors
+                            </button>
+                        </div>
+
+                        <!-- Upcoming Events -->
+                        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6">
+                            <h2 class="text-lg font-semibold mb-4">Upcoming Events</h2>
+                            <div class="space-y-4">
+                                <div class="border-l-4 border-indigo-500 pl-3">
+                                    <p class="text-sm font-medium">React Hooks Workshop</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Today, 7:00 PM</p>
+                                </div>
+                                <div class="border-l-4 border-green-500 pl-3">
+                                    <p class="text-sm font-medium">Portfolio Review Session</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Tomorrow, 5:30 PM</p>
+                                </div>
+                                <div class="border-l-4 border-yellow-500 pl-3">
+                                    <p class="text-sm font-medium">JavaScript Community Meetup</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Apr 7, 6:00 PM</p>
+                                </div>
+                            </div>
+                            <button class="mt-4 w-full flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                View Calendar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex justify-around z-10">
+        <a href="#" class="bottom-nav-item text-indigo-600 dark:text-indigo-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <span class="text-xs mt-1">Home</span>
+        </a>
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <span class="text-xs mt-1">Explore</span>
+        </a>
+        <a href="#" class="bottom-nav-item">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center -mt-5 shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+            </div>
+        </a>
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            <span class="text-xs mt-1">Activity</span>
+        </a>
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <div class="relative">
+                <img class="h-6 w-6 rounded-full" src="https://via.placeholder.com/24" alt="Profile">
+            </div>
+            <span class="text-xs mt-1">Profile</span>
+        </a>
+    </nav>
+</body>
+</html>

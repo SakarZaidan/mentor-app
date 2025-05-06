@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor - User Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Grand+Hotel&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(45deg, #833AB4, #FD1D1D, #FCB045);
+            --primary-blue: #0A66C2;
+            --primary-black: #000000;
+            --vibrant-pink: #FF3366;
+            --vibrant-blue: #00F2EA;
+            --vibrant-purple: #5851DB;
+            --vibrant-red: #FE2C55;
+            --dark-gray: #262626;
+            --medium-gray: #8E8E8E;
+            --light-gray: #EFEFEF;
+            --off-white: #FAFAFA;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--off-white);
+        }
+
+        .dark {
+            --off-white: #121212;
+            --light-gray: #1E1E1E;
+            --medium-gray: #B0B0B0;
+            --dark-gray: #FFFFFF;
+        }
+
+        .logo-font {
+            font-family: 'Grand Hotel', cursive;
+        }
+
+        .gradient-bg {
+            background: var(--primary-gradient);
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 0;
+        }
+
+        .profile-header {
+            background-image: url('https://via.placeholder.com/1200x300');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-top: -75px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .dark .profile-avatar {
+            border-color: #1F2937;
+        }
+
+        .badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .dark .badge {
+            background-color: #1F2937;
+        }
+
+        .skill-progress {
+            height: 6px;
+            border-radius: 3px;
+            background-color: var(--light-gray);
+        }
+
+        .skill-progress-bar {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .tab-active {
+            color: var(--dark-gray);
+            border-bottom: 2px solid var(--dark-gray);
+            font-weight: 600;
+        }
+
+        .dark .tab-active {
+            color: white;
+            border-bottom: 2px solid white;
+        }
+
+        .tab-inactive {
+            color: var(--medium-gray);
+            border-bottom: 2px solid transparent;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+        }
+
+        .gallery-item {
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-item-overlay {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .gallery-item:hover .gallery-item-overlay {
+            opacity: 1;
+        }
+
+        .connection-card {
+            transition: all 0.3s ease;
+        }
+
+        .connection-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        @media (max-width: 640px) {
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+                margin-top: -50px;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body class="text-dark-gray">
+    <!-- Mobile Header -->
+    <header class="md:hidden bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-10">
+        <div class="flex justify-between items-center px-4 py-3">
+            <h1 class="logo-font text-3xl">Mentor</h1>
+            <div class="flex items-center space-x-4">
+                <button>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                </button>
+                <button>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Desktop Layout -->
+    <div class="flex h-screen">
+        <!-- Sidebar Navigation (Desktop Only) -->
+        <aside class="hidden md:flex w-64 bg-white dark:bg-gray-900 shadow-md flex-col h-full">
+            <div class="p-4">
+                <h1 class="logo-font text-3xl">Mentor</h1>
+            </div>
+            <nav class="flex-1 px-2 py-4 space-y-2">
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Social Feed
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                    Todo List
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    Projects
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Pomodoro
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                    Community
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Profile
+                </a>
+            </nav>
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-medium">
+                        JD
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium">John Doe</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Level 12 • Web Dev</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+            <!-- Profile Header -->
+            <div class="profile-header h-48 md:h-64 w-full"></div>
+            
+            <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                <!-- Profile Info -->
+                <div class="flex flex-col items-center md:flex-row md:items-end md:justify-between -mt-12 md:-mt-16 mb-6">
+                    <div class="flex flex-col items-center md:flex-row md:items-end">
+                        <div class="profile-avatar bg-white dark:bg-gray-900 overflow-hidden">
+                            <img src="https://via.placeholder.com/150" alt="John Doe" class="w-full h-full object-cover">
+                        </div>
+                        <div class="mt-4 md:mt-0 md:ml-6 text-center md:text-left">
+                            <div class="flex items-center">
+                                <h1 class="text-2xl font-bold">John Doe</h1>
+                                <div class="ml-2 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs px-2 py-1 rounded-full">
+                                    Mentor
+                                </div>
+                            </div>
+                            <p class="text-gray-500 dark:text-gray-400">@johndoe • Web Developer & UI Designer</p>
+                            <div class="flex items-center mt-2">
+                                <div class="flex items-center mr-4">
+                                    <span class="font-semibold mr-1">248</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">Following</span>
+                                </div>
+                                <div class="flex items-center mr-4">
+                                    <span class="font-semibold mr-1">1.2k</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">Followers</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="font-semibold mr-1">Level 12</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 md:mt-0 flex space-x-2">
+                        <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">
+                            Follow
+                        </button>
+                        <button class="px-4 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800">
+                            Message
+                        </button>
+                        <button class="p-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bio Section -->
+                <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 mb-6">
+                    <h2 class="text-lg font-semibold mb-4">About</h2>
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">
+                        Frontend developer with 5+ years of experience specializing in React and UI/UX design. Passionate about creating intuitive and beautiful interfaces. Currently learning mobile development and mentoring junior developers.
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full text-sm">React.js</span>
+                        <span class="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full text-sm">JavaScript</span>
+                        <span class="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full text-sm">UI/UX Design</span>
+                        <span class="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full text-sm">Figma</span>
+                        <span class="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full text-sm">CSS/SASS</span>
+                    </div>
+                </div>
+
+                <!-- Badges Section -->
+                <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold">Badges & Achievements</h2>
+                        <button class="text-sm text-indigo-600 dark:text-indigo-400 font-medium hover:text-indigo-800 dark:hover:text-indigo-300">
+                            View All
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-4">
+                        <div class="flex flex-col items-center">
+                            <div class="badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                                </svg>
+                            </div>
+                            <span class="text-xs mt-2">Top Mentor</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            </div>
+                            <span class="text-xs mt-2">Fast Learner</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <span class="text-xs mt-2">Consistent</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                </svg>
+                            </div>
+                            <span class="text-xs mt-2">Bookworm</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                            </div>
+                            <span class="text-xs mt-2">Team Player</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                </svg>
+                            </div>
+                            <span class="text-xs mt-2">Innovator</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                </svg>
+                            </div>
+                            <span class="text-xs mt-2">Helpful</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                            </div>
+                            <span class="text-xs mt-2">More</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skills Section -->
+                <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 mb-6">
+                    <h2 class="text-lg font-semibold mb-4">Skills & Progress</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <div class="flex items-center">
+                                    <span class="font-medium">React.js</span>
+                                    <span class="ml-2 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full">Level 15</span>
+                                </div>
+                                <span>85%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-progress-bar bg-blue-500" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <div class="flex items-center">
+                                    <span class="font-medium">UI/UX Design</span>
+                                    <span class="ml-2 text-xs bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-1 rounded-full">Level 12</span>
+                                </div>
+                                <span>75%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-progress-bar bg-purple-500" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <div class="flex items-center">
+                                    <span class="font-medium">Node.js</span>
+                                    <span class="ml-2 text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded-full">Level 8</span>
+                                </div>
+                                <span>60%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-progress-bar bg-green-500" style="width: 60%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <div class="flex items-center">
+                                    <span class="font-medium">Mobile Development</span>
+                                    <span class="ml-2 text-xs bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-2 py-1 rounded-full">Level 5</span>
+                                </div>
+                                <span>40%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-progress-bar bg-red-500" style="width: 40%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Tabs -->
+                <div class="mb-6">
+                    <div class="flex border-b border-gray-200 dark:border-gray-700">
+                        <button class="py-4 px-6 tab-active">
+                            Projects
+                        </button>
+                        <button class="py-4 px-6 tab-inactive">
+                            Activity
+                        </button>
+                        <button class="py-4 px-6 tab-inactive">
+                            Connections
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Projects Gallery -->
+                <div class="mb-6">
+                    <div class="gallery-grid">
+                        <div class="gallery-item">
+                            <img src="https://via.placeholder.com/300" alt="Project">
+                            <div class="gallery-item-overlay">
+                                <div class="text-white text-center">
+                                    <p class="font-medium">Portfolio Website</p>
+                                    <p class="text-sm">React.js, Tailwind CSS</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://via.placeholder.com/300" alt="Project">
+                            <div class="gallery-item-overlay">
+                                <div class="text-white text-center">
+                                    <p class="font-medium">E-commerce Dashboard</p>
+                                    <p class="text-sm">React.js, Material UI</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://via.placeholder.com/300" alt="Project">
+                            <div class="gallery-item-overlay">
+                                <div class="text-white text-center">
+                                    <p class="font-medium">Mobile App Design</p>
+                                    <p class="text-sm">Figma, Adobe XD</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://via.placeholder.com/300" alt="Project">
+                            <div class="gallery-item-overlay">
+                                <div class="text-white text-center">
+                                    <p class="font-medium">Chat Application</p>
+                                    <p class="text-sm">React.js, Firebase</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://via.placeholder.com/300" alt="Project">
+                            <div class="gallery-item-overlay">
+                                <div class="text-white text-center">
+                                    <p class="font-medium">Weather App</p>
+                                    <p class="text-sm">React Native</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://via.placeholder.com/300" alt="Project">
+                            <div class="gallery-item-overlay">
+                                <div class="text-white text-center">
+                                    <p class="font-medium">Task Manager</p>
+                                    <p class="text-sm">Vue.js, Node.js</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://via.placeholder.com/300" alt="Project">
+                            <div class="gallery-item-overlay">
+                                <div class="text-white text-center">
+                                    <p class="font-medium">Landing Page</p>
+                                    <p class="text-sm">HTML, CSS, JavaScript</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://via.placeholder.com/300" alt="Project">
+                            <div class="gallery-item-overlay">
+                                <div class="text-white text-center">
+                                    <p class="font-medium">Blog Platform</p>
+                                    <p class="text-sm">Next.js, MongoDB</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://via.placeholder.com/300" alt="Project">
+                            <div class="gallery-item-overlay">
+                                <div class="text-white text-center">
+                                    <p class="font-medium">More Projects</p>
+                                    <p class="text-sm">View All</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Connections Section -->
+                <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold">Recent Connections</h2>
+                        <button class="text-sm text-indigo-600 dark:text-indigo-400 font-medium hover:text-indigo-800 dark:hover:text-indigo-300">
+                            View All
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="connection-card bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 rounded-full overflow-hidden">
+                                    <img src="https://via.placeholder.com/48" alt="Connection" class="w-full h-full object-cover">
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <p class="font-medium">Sarah Johnson</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">UI Designer • Level 14</p>
+                                </div>
+                                <button class="px-3 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded-full text-xs font-medium">
+                                    Following
+                                </button>
+                            </div>
+                        </div>
+                        <div class="connection-card bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 rounded-full overflow-hidden">
+                                    <img src="https://via.placeholder.com/48" alt="Connection" class="w-full h-full object-cover">
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <p class="font-medium">Michael Chen</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Full Stack Dev • Level 18</p>
+                                </div>
+                                <button class="px-3 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded-full text-xs font-medium">
+                                    Following
+                                </button>
+                            </div>
+                        </div>
+                        <div class="connection-card bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 rounded-full overflow-hidden">
+                                    <img src="https://via.placeholder.com/48" alt="Connection" class="w-full h-full object-cover">
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <p class="font-medium">Alex Rivera</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Mobile Dev • Level 10</p>
+                                </div>
+                                <button class="px-3 py-1 bg-indigo-600 text-white rounded-full text-xs font-medium">
+                                    Follow
+                                </button>
+                            </div>
+                        </div>
+                        <div class="connection-card bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 rounded-full overflow-hidden">
+                                    <img src="https://via.placeholder.com/48" alt="Connection" class="w-full h-full object-cover">
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <p class="font-medium">Emily Wilson</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">UX Researcher • Level 12</p>
+                                </div>
+                                <button class="px-3 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded-full text-xs font-medium">
+                                    Following
+                                </button>
+                            </div>
+                        </div>
+                        <div class="connection-card bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 rounded-full overflow-hidden">
+                                    <img src="https://via.placeholder.com/48" alt="Connection" class="w-full h-full object-cover">
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <p class="font-medium">David Kim</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Backend Dev • Level 15</p>
+                                </div>
+                                <button class="px-3 py-1 bg-indigo-600 text-white rounded-full text-xs font-medium">
+                                    Follow
+                                </button>
+                            </div>
+                        </div>
+                        <div class="connection-card bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 rounded-full overflow-hidden">
+                                    <img src="https://via.placeholder.com/48" alt="Connection" class="w-full h-full object-cover">
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <p class="font-medium">Sophia Martinez</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Product Designer • Level 16</p>
+                                </div>
+                                <button class="px-3 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded-full text-xs font-medium">
+                                    Following
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex justify-around z-10">
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <span class="text-xs mt-1">Home</span>
+        </a>
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <span class="text-xs mt-1">Explore</span>
+        </a>
+        <a href="#" class="bottom-nav-item">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center -mt-5 shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+            </div>
+        </a>
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <span class="text-xs mt-1">Messages</span>
+        </a>
+        <a href="#" class="bottom-nav-item text-indigo-600 dark:text-indigo-400">
+            <div class="relative">
+                <img class="h-6 w-6 rounded-full" src="https://via.placeholder.com/24" alt="Profile">
+            </div>
+            <span class="text-xs mt-1">Profile</span>
+        </a>
+    </nav>
+</body>
+</html>

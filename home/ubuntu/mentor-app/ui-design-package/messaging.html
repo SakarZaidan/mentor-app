@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor - Messaging</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Grand+Hotel&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(45deg, #833AB4, #FD1D1D, #FCB045);
+            --primary-blue: #0A66C2;
+            --primary-black: #000000;
+            --vibrant-pink: #FF3366;
+            --vibrant-blue: #00F2EA;
+            --vibrant-purple: #5851DB;
+            --vibrant-red: #FE2C55;
+            --dark-gray: #262626;
+            --medium-gray: #8E8E8E;
+            --light-gray: #EFEFEF;
+            --off-white: #FAFAFA;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--off-white);
+        }
+
+        .dark {
+            --off-white: #121212;
+            --light-gray: #1E1E1E;
+            --medium-gray: #B0B0B0;
+            --dark-gray: #FFFFFF;
+        }
+
+        .logo-font {
+            font-family: 'Grand Hotel', cursive;
+        }
+
+        .gradient-bg {
+            background: var(--primary-gradient);
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 0;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 64px);
+        }
+
+        .chat-list {
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        .chat-item {
+            transition: all 0.2s ease;
+        }
+
+        .chat-item:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .chat-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .chat-item.active {
+            background-color: rgba(79, 70, 229, 0.1);
+            border-left: 3px solid #4F46E5;
+        }
+
+        .dark .chat-item.active {
+            background-color: rgba(79, 70, 229, 0.2);
+        }
+
+        .message-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 64px);
+        }
+
+        .message-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .message-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .message-footer {
+            padding: 1rem;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .message-bubble {
+            max-width: 75%;
+            padding: 0.75rem 1rem;
+            border-radius: 1.25rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .message-bubble.sent {
+            background-color: #4F46E5;
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+            align-self: flex-end;
+        }
+
+        .message-bubble.received {
+            background-color: #F3F4F6;
+            color: #1F2937;
+            border-bottom-left-radius: 0.25rem;
+            align-self: flex-start;
+        }
+
+        .dark .message-bubble.received {
+            background-color: #374151;
+            color: #F9FAFB;
+        }
+
+        .message-input {
+            border-radius: 9999px;
+            padding: 0.75rem 1.5rem;
+            background-color: #F3F4F6;
+            border: none;
+            outline: none;
+            width: 100%;
+        }
+
+        .dark .message-input {
+            background-color: #374151;
+            color: #F9FAFB;
+        }
+
+        .message-input:focus {
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3);
+        }
+
+        .online-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #10B981;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .offline-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #9CA3AF;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .search-input {
+            border-radius: 9999px;
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            background-color: #F3F4F6;
+            border: none;
+            outline: none;
+            width: 100%;
+        }
+
+        .dark .search-input {
+            background-color: #374151;
+            color: #F9FAFB;
+        }
+
+        .search-input:focus {
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9CA3AF;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: #9CA3AF;
+            margin-top: 0.25rem;
+        }
+
+        .dark .message-time {
+            color: #D1D5DB;
+        }
+
+        .message-status {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            font-size: 0.75rem;
+            color: #9CA3AF;
+            margin-top: 0.25rem;
+        }
+
+        .dark .message-status {
+            color: #D1D5DB;
+        }
+
+        .message-status svg {
+            width: 1rem;
+            height: 1rem;
+            margin-left: 0.25rem;
+        }
+
+        .message-date-divider {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+            color: #9CA3AF;
+            font-size: 0.75rem;
+        }
+
+        .message-date-divider::before,
+        .message-date-divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #E5E7EB;
+            margin: 0 1rem;
+        }
+
+        .dark .message-date-divider::before,
+        .dark .message-date-divider::after {
+            border-color: #4B5563;
+        }
+
+        @media (max-width: 768px) {
+            .chat-list-container {
+                display: none;
+            }
+
+            .chat-list-container.active {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 50;
+            }
+
+            .message-container.active {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="text-dark-gray">
+    <!-- Mobile Header -->
+    <header class="md:hidden bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-10">
+        <div class="flex justify-between items-center px-4 py-3">
+            <h1 class="logo-font text-3xl">Mentor</h1>
+            <div class="flex items-center space-x-4">
+                <button>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                </button>
+                <button>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Desktop Layout -->
+    <div class="flex h-screen">
+        <!-- Sidebar Navigation (Desktop Only) -->
+        <aside class="hidden md:flex w-64 bg-white dark:bg-gray-900 shadow-md flex-col h-full">
+            <div class="p-4">
+                <h1 class="logo-font text-3xl">Mentor</h1>
+            </div>
+            <nav class="flex-1 px-2 py-4 space-y-2">
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Social Feed
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                    Todo List
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    Projects
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Pomodoro
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    Messages
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Profile
+                </a>
+            </nav>
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-medium">
+                        JD
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium">John Doe</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Level 12 • Web Dev</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex">
+            <!-- Chat List -->
+            <div class="w-full md:w-1/3 lg:w-1/4 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 chat-list-container active">
+                <div class="chat-container">
+                    <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                        <h2 class="text-lg font-semibold mb-4">Messages</h2>
+                        <div class="relative">
+                            <div class="search-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </div>
+                            <input type="text" placeholder="Search messages" class="search-input">
+                        </div>
+                    </div>
+                    <div class="chat-list">
+                        <div class="chat-item active p-4 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center">
+                                <div class="relative">
+                                    <img src="https://via.placeholder.com/40" alt="Sarah Johnson" class="w-10 h-10 rounded-full">
+                                    <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full"></span>
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <div class="flex justify-between items-center">
+                                        <p class="font-medium">Sarah Johnson</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">10:42 AM</p>
+                                    </div>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 truncate">I've been working on the design for our new project. Can you check it out?</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-item p-4 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center">
+                                <div class="relative">
+                                    <img src="https://via.placeholder.com/40" alt="Michael Chen" class="w-10 h-10 rounded-full">
+                                    <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full"></span>
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <div class="flex justify-between items-center">
+                                        <p class="font-medium">Michael Chen</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Yesterday</p>
+                                    </div>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 truncate">Hey, do you have time for a quick call about the React components?</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-item p-4 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center">
+                                <div class="relative">
+                                    <img src="https://via.placeholder.com/40" alt="Web Dev Group" class="w-10 h-10 rounded-full">
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <div class="flex justify-between items-center">
+                                        <p class="font-medium">Web Dev Group</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Yesterday</p>
+                                    </div>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 truncate">Alex: Has anyone used the new Next.js 13 features yet?</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-item p-4 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center">
+                                <div class="relative">
+                                    <img src="https://via.placeholder.com/40" alt="Emily Wilson" class="w-10 h-10 rounded-full">
+                                    <span class="absolute bottom-0 right-0 w-3 h-3 bg-gray-400 border-2 border-white dark:border-gray-900 rounded-full"></span>
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <div class="flex justify-between items-center">
+                                        <p class="font-medium">Emily Wilson</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Tuesday</p>
+                                    </div>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 truncate">Thanks for your help with the UX research! The insights were really valuable.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-item p-4 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center">
+                                <div class="relative">
+                                    <img src="https://via.placeholder.com/40" alt="David Kim" class="w-10 h-10 rounded-full">
+                                    <span class="absolute bottom-0 right-0 w-3 h-3 bg-gray-400 border-2 border-white dark:border-gray-900 rounded-full"></span>
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <div class="flex justify-between items-center">
+                                        <p class="font-medium">David Kim</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Monday</p>
+                                    </div>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 truncate">I've deployed the backend API. Here's the documentation link.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-item p-4 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center">
+                                <div class="relative">
+                                    <img src="https://via.placeholder.com/40" alt="Sophia Martinez" class="w-10 h-10 rounded-full">
+                                    <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full"></span>
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <div class="flex justify-between items-center">
+                                        <p class="font-medium">Sophia Martinez</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Last week</p>
+                                    </div>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 truncate">Would you be interested in collaborating on a design system project?</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-item p-4 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center">
+                                <div class="relative">
+                                    <img src="https://via.placeholder.com/40" alt="UI/UX Group" class="w-10 h-10 rounded-full">
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <div class="flex justify-between items-center">
+                                        <p class="font-medium">UI/UX Group</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Last week</p>
+                                    </div>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 truncate">Sophia: Don't forget about our design review meeting tomorrow at 2 PM!</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-item p-4 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center">
+                                <div class="relative">
+                                    <img src="https://via.placeholder.com/40" alt="Alex Rivera" class="w-10 h-10 rounded-full">
+                                    <span class="absolute bottom-0 right-0 w-3 h-3 bg-gray-400 border-2 border-white dark:border-gray-900 rounded-full"></span>
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <div class="flex justify-between items-center">
+                                        <p class="font-medium">Alex Rivera</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">2 weeks ago</p>
+                                    </div>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 truncate">I've shared some resources on React Native that might help with your mobile app project.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message Content -->
+            <div class="hidden md:flex w-2/3 lg:w-3/4 message-container">
+                <div class="flex-1 flex flex-col">
+                    <!-- Message Header -->
+                    <div class="message-header bg-white dark:bg-gray-900 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <button class="md:hidden mr-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </button>
+                            <div class="relative">
+                                <img src="https://via.placeholder.com/40" alt="Sarah Johnson" class="w-10 h-10 rounded-full">
+                                <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full"></span>
+                            </div>
+                            <div class="ml-3">
+                                <p class="font-medium">Sarah Johnson</p>
+                                <div class="flex items-center">
+                                    <span class="online-indicator"></span>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">Online</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                            </button>
+                            <button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                </svg>
+                            </button>
+                            <button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Message Body -->
+                    <div class="message-body bg-gray-50 dark:bg-gray-800 flex flex-col">
+                        <div class="message-date-divider">
+                            Today
+                        </div>
+
+                        <div class="message-bubble received">
+                            <p>Hi John! I've been working on the design for our new project. Can you check it out when you have a moment?</p>
+                            <div class="message-time">10:15 AM</div>
+                        </div>
+
+                        <div class="message-bubble received">
+                            <p>I've uploaded the Figma files to our shared workspace.</p>
+                            <div class="message-time">10:16 AM</div>
+                        </div>
+
+                        <div class="message-bubble sent">
+                            <p>Hey Sarah! Sure, I'll take a look at it right away.</p>
+                            <div class="message-status">
+                                <span>10:20 AM</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="message-bubble sent">
+                            <p>Do you want to schedule a call to discuss the design in more detail?</p>
+                            <div class="message-status">
+                                <span>10:21 AM</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="message-bubble received">
+                            <p>That would be great! How about 2 PM today?</p>
+                            <div class="message-time">10:25 AM</div>
+                        </div>
+
+                        <div class="message-bubble received">
+                            <p>I also wanted to discuss the user flow for the onboarding process. I think we can simplify it further.</p>
+                            <div class="message-time">10:26 AM</div>
+                        </div>
+
+                        <div class="message-bubble sent">
+                            <p>2 PM works for me. I'll set up a meeting and send you the link.</p>
+                            <div class="message-status">
+                                <span>10:30 AM</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="message-bubble sent">
+                            <p>And yes, I agree about the onboarding flow. I had some ideas about that too. Let's discuss it during our call.</p>
+                            <div class="message-status">
+                                <span>10:32 AM</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="message-bubble received">
+                            <p>Perfect! Looking forward to our meeting. I'll prepare some notes on the onboarding flow.</p>
+                            <div class="message-time">10:40 AM</div>
+                        </div>
+
+                        <div class="message-bubble received">
+                            <p>By the way, have you seen the new design system components I added to our library?</p>
+                            <div class="message-time">10:42 AM</div>
+                        </div>
+                    </div>
+
+                    <!-- Message Footer -->
+                    <div class="message-footer bg-white dark:bg-gray-900 flex items-center">
+                        <button class="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                            </svg>
+                        </button>
+                        <input type="text" placeholder="Type a message..." class="message-input mx-2 flex-1">
+                        <button class="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </button>
+                        <button class="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                            </svg>
+                        </button>
+                        <button class="ml-2 p-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex justify-around z-10">
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <span class="text-xs mt-1">Home</span>
+        </a>
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <span class="text-xs mt-1">Explore</span>
+        </a>
+        <a href="#" class="bottom-nav-item">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center -mt-5 shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+            </div>
+        </a>
+        <a href="#" class="bottom-nav-item text-indigo-600 dark:text-indigo-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <span class="text-xs mt-1">Messages</span>
+        </a>
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <div class="relative">
+                <img class="h-6 w-6 rounded-full" src="https://via.placeholder.com/24" alt="Profile">
+            </div>
+            <span class="text-xs mt-1">Profile</span>
+        </a>
+    </nav>
+
+    <script>
+        // This would be implemented with a proper framework like React
+        // Just showing the structure here
+    </script>
+</body>
+</html>

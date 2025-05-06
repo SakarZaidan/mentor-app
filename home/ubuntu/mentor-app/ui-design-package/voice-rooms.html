@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor - Voice Rooms</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Grand+Hotel&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(45deg, #833AB4, #FD1D1D, #FCB045);
+            --primary-blue: #0A66C2;
+            --primary-black: #000000;
+            --vibrant-pink: #FF3366;
+            --vibrant-blue: #00F2EA;
+            --vibrant-purple: #5851DB;
+            --vibrant-red: #FE2C55;
+            --dark-gray: #262626;
+            --medium-gray: #8E8E8E;
+            --light-gray: #EFEFEF;
+            --off-white: #FAFAFA;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--off-white);
+        }
+
+        .dark {
+            --off-white: #121212;
+            --light-gray: #1E1E1E;
+            --medium-gray: #B0B0B0;
+            --dark-gray: #FFFFFF;
+        }
+
+        .logo-font {
+            font-family: 'Grand Hotel', cursive;
+        }
+
+        .gradient-bg {
+            background: var(--primary-gradient);
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 0;
+        }
+
+        .room-card {
+            transition: all 0.3s ease;
+        }
+
+        .room-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .avatar-stack {
+            display: flex;
+        }
+
+        .avatar-stack .avatar {
+            margin-left: -8px;
+            border: 2px solid white;
+        }
+
+        .dark .avatar-stack .avatar {
+            border-color: #1F2937;
+        }
+
+        .avatar-stack .avatar:first-child {
+            margin-left: 0;
+        }
+
+        .live-indicator {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(239, 68, 68, 0.9);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+        }
+
+        .live-indicator::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            background-color: white;
+            border-radius: 50%;
+            margin-right: 4px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+            }
+            
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
+            }
+            
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+            }
+        }
+
+        .tab-active {
+            color: var(--dark-gray);
+            border-bottom: 2px solid var(--dark-gray);
+            font-weight: 600;
+        }
+
+        .dark .tab-active {
+            color: white;
+            border-bottom: 2px solid white;
+        }
+
+        .tab-inactive {
+            color: var(--medium-gray);
+            border-bottom: 2px solid transparent;
+        }
+
+        .voice-room-container {
+            height: calc(100vh - 64px);
+        }
+
+        .participant {
+            transition: all 0.2s ease;
+        }
+
+        .participant:hover {
+            transform: scale(1.05);
+        }
+
+        .participant.speaking {
+            border: 2px solid #10B981;
+        }
+
+        .dark .participant.speaking {
+            border-color: #10B981;
+        }
+
+        .audio-visualizer {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            height: 40px;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .audio-bar {
+            width: 4px;
+            background-color: #10B981;
+            margin: 0 1px;
+            border-radius: 2px;
+        }
+
+        .control-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .control-button:hover {
+            transform: scale(1.05);
+        }
+
+        .control-button:active {
+            transform: scale(0.95);
+        }
+
+        .search-input {
+            border-radius: 9999px;
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            background-color: #F3F4F6;
+            border: none;
+            outline: none;
+            width: 100%;
+        }
+
+        .dark .search-input {
+            background-color: #374151;
+            color: #F9FAFB;
+        }
+
+        .search-input:focus {
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9CA3AF;
+        }
+
+        @media (max-width: 640px) {
+            .room-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="text-dark-gray">
+    <!-- Mobile Header -->
+    <header class="md:hidden bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-10">
+        <div class="flex justify-between items-center px-4 py-3">
+            <h1 class="logo-font text-3xl">Mentor</h1>
+            <div class="flex items-center space-x-4">
+                <button>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                </button>
+                <button>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Desktop Layout -->
+    <div class="flex h-screen">
+        <!-- Sidebar Navigation (Desktop Only) -->
+        <aside class="hidden md:flex w-64 bg-white dark:bg-gray-900 shadow-md flex-col h-full">
+            <div class="p-4">
+                <h1 class="logo-font text-3xl">Mentor</h1>
+            </div>
+            <nav class="flex-1 px-2 py-4 space-y-2">
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Social Feed
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                    Todo List
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    Projects
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Pomodoro
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    Messages
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                    </svg>
+                    Voice Rooms
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Profile
+                </a>
+            </nav>
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-medium">
+                        JD
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium">John Doe</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Level 12 • Web Dev</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+                <!-- Header with Actions -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
+                    <div>
+                        <h1 class="text-2xl font-bold mb-1">Voice Rooms</h1>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Connect with mentors and peers in real-time voice conversations</p>
+                    </div>
+                    <div class="flex items-center space-x-2 mt-4 sm:mt-0">
+                        <button class="flex items-center px-3 py-2 bg-white dark:bg-gray-900 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                            </svg>
+                            Filter
+                        </button>
+                        <button class="flex items-center px-3 py-2 bg-indigo-600 rounded-lg shadow-sm text-sm font-medium text-white hover:bg-indigo-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                            Create Room
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="mb-6">
+                    <div class="flex border-b border-gray-200 dark:border-gray-700">
+                        <button class="py-4 px-6 tab-active">
+                            Explore
+                        </button>
+                        <button class="py-4 px-6 tab-inactive">
+                            My Rooms
+                        </button>
+                        <button class="py-4 px-6 tab-inactive">
+                            Scheduled
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="mb-6">
+                    <div class="relative">
+                        <div class="search-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <input type="text" placeholder="Search for rooms, topics, or people" class="search-input">
+                    </div>
+                </div>
+
+                <!-- Featured Rooms -->
+                <div class="mb-8">
+                    <h2 class="text-lg font-semibold mb-4">Featured Rooms</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 room-grid">
+                        <!-- Room Card 1 -->
+                        <div class="room-card bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden">
+                            <div class="relative">
+                                <img src="https://via.placeholder.com/400x200" alt="Room Cover" class="w-full h-40 object-cover">
+                                <div class="live-indicator">LIVE</div>
+                            </div>
+                            <div class="p-5">
+                                <h3 class="font-semibold text-lg mb-1">React Hooks Deep Dive</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Advanced React patterns and best practices with live Q&A</p>
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center">
+                                        <div class="avatar-stack">
+                                            <img src="https://via.placeholder.com/32" alt="Host" class="w-8 h-8 rounded-full avatar">
+                                            <img src="https://via.placeholder.com/32" alt="Speaker" class="w-8 h-8 rounded-full avatar">
+                                            <img src="https://via.placeholder.com/32" alt="Speaker" class="w-8 h-8 rounded-full avatar">
+                                            <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300 avatar">
+                                                +12
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                                        <span class="font-medium text-gray-900 dark:text-white">15</span> listening
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <span class="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded-full text-xs">React</span>
+                                    <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-xs">JavaScript</span>
+                                    <span class="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-xs">Web Dev</span>
+                                </div>
+                                <button class="mt-4 w-full py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">
+                                    Join Room
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Room Card 2 -->
+                        <div class="room-card bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden">
+                            <div class="relative">
+                                <img src="https://via.placeholder.com/400x200" alt="Room Cover" class="w-full h-40 object-cover">
+                                <div class="live-indicator">LIVE</div>
+                            </div>
+                            <div class="p-5">
+                                <h3 class="font-semibold text-lg mb-1">UI/UX Design Principles</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Learn the fundamentals of user interface and experience design</p>
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center">
+                                        <div class="avatar-stack">
+                                            <img src="https://via.placeholder.com/32" alt="Host" class="w-8 h-8 rounded-full avatar">
+                                            <img src="https://via.placeholder.com/32" alt="Speaker" class="w-8 h-8 rounded-full avatar">
+                                            <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300 avatar">
+                                                +8
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                                        <span class="font-medium text-gray-900 dark:text-white">23</span> listening
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <span class="px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-full text-xs">UI/UX</span>
+                                    <span class="px-2 py-1 bg-pink-100 dark:bg-pink-900 text-pink-800 dark:text-pink-200 rounded-full text-xs">Design</span>
+                                    <span class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded-full text-xs">Figma</span>
+                                </div>
+                                <button class="mt-4 w-full py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">
+                                    Join Room
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Room Card 3 -->
+                        <div class="room-card bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden">
+                            <div class="relative">
+                                <img src="https://via.placeholder.com/400x200" alt="Room Cover" class="w-full h-40 object-cover">
+                                <div class="live-indicator">LIVE</div>
+                            </div>
+                            <div class="p-5">
+                                <h3 class="font-semibold text-lg mb-1">Freelancing Tips & Tricks</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">How to find clients, manage projects, and grow your freelance business</p>
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center">
+                                        <div class="avatar-stack">
+                                            <img src="https://via.placeholder.com/32" alt="Host" class="w-8 h-8 rounded-full avatar">
+                                            <img src="https://via.placeholder.com/32" alt="Speaker" class="w-8 h-8 rounded-full avatar">
+                                            <img src="https://via.placeholder.com/32" alt="Speaker" class="w-8 h-8 rounded-full avatar">
+                                            <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300 avatar">
+                                                +5
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                                        <span class="font-medium text-gray-900 dark:text-white">18</span> listening
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <span class="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-xs">Freelancing</span>
+                                    <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-xs">Business</span>
+                                    <span class="px-2 py-1 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded-full text-xs">Career</span>
+                                </div>
+                                <button class="mt-4 w-full py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">
+                                    Join Room
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Popular Categories -->
+                <div class="mb-8">
+                    <h2 class="text-lg font-semibold mb-4">Popular Categories</h2>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-4 text-center hover:shadow-md transition-shadow">
+                            <div class="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center mx-auto mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                                </svg>
+                            </div>
+                            <p class="font-medium">Web Dev</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">24 rooms</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-4 text-center hover:shadow-md transition-shadow">
+                            <div class="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center mx-auto mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                                </svg>
+                            </div>
+                            <p class="font-medium">UI/UX</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">18 rooms</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-4 text-center hover:shadow-md transition-shadow">
+                            <div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mx-auto mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                </svg>
+                            </div>
+                            <p class="font-medium">Productivity</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">15 rooms</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-4 text-center hover:shadow-md transition-shadow">
+                            <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mx-auto mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <p class="font-medium">Mobile Dev</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">12 rooms</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-4 text-center hover:shadow-md transition-shadow">
+                            <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mx-auto mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                </svg>
+                            </div>
+                            <p class="font-medium">Career</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">10 rooms</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-4 text-center hover:shadow-md transition-shadow">
+                            <div class="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-900 flex items-center justify-center mx-auto mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600 dark:text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                </svg>
+                            </div>
+                            <p class="font-medium">Learning</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">8 rooms</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Rooms -->
+                <div class="mb-8">
+                    <h2 class="text-lg font-semibold mb-4">Upcoming Rooms</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 room-grid">
+                        <!-- Upcoming Room 1 -->
+                        <div class="room-card bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden">
+                            <div class="relative">
+                                <img src="https://via.placeholder.com/400x200" alt="Room Cover" class="w-full h-40 object-cover">
+                            </div>
+                            <div class="p-5">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="font-semibold text-lg">Backend Architecture</h3>
+                                    <span class="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full">Tomorrow</span>
+                                </div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Scaling your backend services for high traffic applications</p>
+                                <div class="flex items-center mb-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">Apr 6, 2025 • 2:00 PM</span>
+                                </div>
+                                <div class="flex items-center mb-3">
+                                    <img src="https://via.placeholder.com/32" alt="Host" class="w-8 h-8 rounded-full mr-2">
+                                    <div>
+                                        <p class="text-sm font-medium">David Kim</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Senior Backend Engineer</p>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2 mb-4">
+                                    <span class="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-xs">Node.js</span>
+                                    <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-xs">Architecture</span>
+                                    <span class="px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-full text-xs">Scaling</span>
+                                </div>
+                                <button class="w-full py-2 bg-white dark:bg-gray-800 border border-indigo-600 text-indigo-600 dark:text-indigo-400 rounded-lg text-sm font-medium hover:bg-indigo-50 dark:hover:bg-gray-700">
+                                    Set Reminder
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Upcoming Room 2 -->
+                        <div class="room-card bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden">
+                            <div class="relative">
+                                <img src="https://via.placeholder.com/400x200" alt="Room Cover" class="w-full h-40 object-cover">
+                            </div>
+                            <div class="p-5">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="font-semibold text-lg">Portfolio Review Session</h3>
+                                    <span class="text-xs bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-1 rounded-full">This Week</span>
+                                </div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Get feedback on your design portfolio from industry experts</p>
+                                <div class="flex items-center mb-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">Apr 8, 2025 • 5:30 PM</span>
+                                </div>
+                                <div class="flex items-center mb-3">
+                                    <img src="https://via.placeholder.com/32" alt="Host" class="w-8 h-8 rounded-full mr-2">
+                                    <div>
+                                        <p class="text-sm font-medium">Sarah Johnson</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Senior UI Designer</p>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2 mb-4">
+                                    <span class="px-2 py-1 bg-pink-100 dark:bg-pink-900 text-pink-800 dark:text-pink-200 rounded-full text-xs">Portfolio</span>
+                                    <span class="px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-full text-xs">Design</span>
+                                    <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-xs">Feedback</span>
+                                </div>
+                                <button class="w-full py-2 bg-white dark:bg-gray-800 border border-indigo-600 text-indigo-600 dark:text-indigo-400 rounded-lg text-sm font-medium hover:bg-indigo-50 dark:hover:bg-gray-700">
+                                    Set Reminder
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Upcoming Room 3 -->
+                        <div class="room-card bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden">
+                            <div class="relative">
+                                <img src="https://via.placeholder.com/400x200" alt="Room Cover" class="w-full h-40 object-cover">
+                            </div>
+                            <div class="p-5">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="font-semibold text-lg">AI in Web Development</h3>
+                                    <span class="text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded-full">Next Week</span>
+                                </div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Exploring how AI is transforming modern web development</p>
+                                <div class="flex items-center mb-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">Apr 12, 2025 • 1:00 PM</span>
+                                </div>
+                                <div class="flex items-center mb-3">
+                                    <img src="https://via.placeholder.com/32" alt="Host" class="w-8 h-8 rounded-full mr-2">
+                                    <div>
+                                        <p class="text-sm font-medium">Michael Chen</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">AI Researcher & Developer</p>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2 mb-4">
+                                    <span class="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded-full text-xs">AI</span>
+                                    <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-xs">Web Dev</span>
+                                    <span class="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-xs">Future</span>
+                                </div>
+                                <button class="w-full py-2 bg-white dark:bg-gray-800 border border-indigo-600 text-indigo-600 dark:text-indigo-400 rounded-lg text-sm font-medium hover:bg-indigo-50 dark:hover:bg-gray-700">
+                                    Set Reminder
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Room Preview -->
+                <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden mb-6">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h2 class="text-xl font-semibold">React Hooks Deep Dive</h2>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Advanced React patterns and best practices with live Q&A</p>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="live-indicator mr-2">LIVE</span>
+                                <span class="text-sm text-gray-500 dark:text-gray-400">
+                                    <span class="font-medium text-gray-900 dark:text-white">15</span> listening
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 mb-8">
+                            <!-- Speaker 1 (Host) -->
+                            <div class="flex flex-col items-center">
+                                <div class="relative">
+                                    <div class="w-16 h-16 rounded-full overflow-hidden participant speaking">
+                                        <img src="https://via.placeholder.com/64" alt="Host" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="absolute -bottom-1 -right-1 bg-red-500 text-white rounded-full p-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="audio-visualizer">
+                                    <div class="audio-bar" style="height: 60%;"></div>
+                                    <div class="audio-bar" style="height: 80%;"></div>
+                                    <div class="audio-bar" style="height: 40%;"></div>
+                                    <div class="audio-bar" style="height: 70%;"></div>
+                                    <div class="audio-bar" style="height: 50%;"></div>
+                                </div>
+                                <p class="text-sm font-medium mt-2">Michael Chen</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Host</p>
+                            </div>
+
+                            <!-- Speaker 2 -->
+                            <div class="flex flex-col items-center">
+                                <div class="relative">
+                                    <div class="w-16 h-16 rounded-full overflow-hidden participant">
+                                        <img src="https://via.placeholder.com/64" alt="Speaker" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="absolute -bottom-1 -right-1 bg-red-500 text-white rounded-full p-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="audio-visualizer">
+                                    <div class="audio-bar" style="height: 20%;"></div>
+                                    <div class="audio-bar" style="height: 10%;"></div>
+                                    <div class="audio-bar" style="height: 15%;"></div>
+                                    <div class="audio-bar" style="height: 10%;"></div>
+                                    <div class="audio-bar" style="height: 20%;"></div>
+                                </div>
+                                <p class="text-sm font-medium mt-2">Sarah Johnson</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Speaker</p>
+                            </div>
+
+                            <!-- Speaker 3 -->
+                            <div class="flex flex-col items-center">
+                                <div class="relative">
+                                    <div class="w-16 h-16 rounded-full overflow-hidden participant">
+                                        <img src="https://via.placeholder.com/64" alt="Speaker" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="absolute -bottom-1 -right-1 bg-red-500 text-white rounded-full p-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="audio-visualizer">
+                                    <div class="audio-bar" style="height: 10%;"></div>
+                                    <div class="audio-bar" style="height: 10%;"></div>
+                                    <div class="audio-bar" style="height: 10%;"></div>
+                                    <div class="audio-bar" style="height: 10%;"></div>
+                                    <div class="audio-bar" style="height: 10%;"></div>
+                                </div>
+                                <p class="text-sm font-medium mt-2">Alex Rivera</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Speaker</p>
+                            </div>
+
+                            <!-- Listener 1 -->
+                            <div class="flex flex-col items-center">
+                                <div class="relative">
+                                    <div class="w-16 h-16 rounded-full overflow-hidden participant">
+                                        <img src="https://via.placeholder.com/64" alt="Listener" class="w-full h-full object-cover">
+                                    </div>
+                                </div>
+                                <p class="text-sm font-medium mt-2">Emily Wilson</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Listener</p>
+                            </div>
+
+                            <!-- Listener 2 -->
+                            <div class="flex flex-col items-center">
+                                <div class="relative">
+                                    <div class="w-16 h-16 rounded-full overflow-hidden participant">
+                                        <img src="https://via.placeholder.com/64" alt="Listener" class="w-full h-full object-cover">
+                                    </div>
+                                </div>
+                                <p class="text-sm font-medium mt-2">David Kim</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Listener</p>
+                            </div>
+
+                            <!-- More Listeners -->
+                            <div class="flex flex-col items-center">
+                                <div class="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 font-medium">
+                                    +12
+                                </div>
+                                <p class="text-sm font-medium mt-2">More</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Listeners</p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-center space-x-4">
+                            <button class="control-button bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15.536a5 5 0 001.414 1.414m0 0l-2.828 2.828-3.172-3.172a9 9 0 010-12.728l3.172-3.172 2.828 2.828a9 9 0 013.172-1.414M7 13a3 3 0 100-6 3 3 0 000 6z" />
+                                </svg>
+                            </button>
+                            <button class="control-button bg-red-500 text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                                </svg>
+                            </button>
+                            <button class="control-button bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
+                            </button>
+                            <button class="control-button bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                </svg>
+                            </button>
+                            <button class="control-button bg-indigo-600 text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex justify-around z-10">
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <span class="text-xs mt-1">Home</span>
+        </a>
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <span class="text-xs mt-1">Messages</span>
+        </a>
+        <a href="#" class="bottom-nav-item">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center -mt-5 shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+            </div>
+        </a>
+        <a href="#" class="bottom-nav-item text-indigo-600 dark:text-indigo-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+            </svg>
+            <span class="text-xs mt-1">Voice</span>
+        </a>
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <div class="relative">
+                <img class="h-6 w-6 rounded-full" src="https://via.placeholder.com/24" alt="Profile">
+            </div>
+            <span class="text-xs mt-1">Profile</span>
+        </a>
+    </nav>
+
+    <script>
+        // This would be implemented with a proper framework like React
+        // Just showing the structure here
+    </script>
+</body>
+</html>

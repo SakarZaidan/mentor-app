@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor - Social Feed</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Grand+Hotel&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(45deg, #833AB4, #FD1D1D, #FCB045);
+            --primary-blue: #0A66C2;
+            --primary-black: #000000;
+            --vibrant-pink: #FF3366;
+            --vibrant-blue: #00F2EA;
+            --vibrant-purple: #5851DB;
+            --vibrant-red: #FE2C55;
+            --dark-gray: #262626;
+            --medium-gray: #8E8E8E;
+            --light-gray: #EFEFEF;
+            --off-white: #FAFAFA;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--off-white);
+        }
+
+        .dark {
+            --off-white: #121212;
+            --light-gray: #1E1E1E;
+            --medium-gray: #B0B0B0;
+            --dark-gray: #FFFFFF;
+        }
+
+        .logo-font {
+            font-family: 'Grand Hotel', cursive;
+        }
+
+        .story-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            padding: 3px;
+            background: var(--primary-gradient);
+        }
+
+        .story-circle-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .gradient-bg {
+            background: var(--primary-gradient);
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 0;
+        }
+
+        .post-action-btn {
+            padding: 8px;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .post-action-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .post-action-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-active {
+            border-bottom: 2px solid var(--dark-gray);
+            color: var(--dark-gray);
+            font-weight: 600;
+        }
+
+        .dark .tab-active {
+            border-bottom: 2px solid white;
+            color: white;
+        }
+
+        .tab-inactive {
+            border-bottom: 2px solid transparent;
+            color: var(--medium-gray);
+        }
+
+        .platform-filter {
+            padding: 6px 12px;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .platform-filter.active {
+            background-color: var(--dark-gray);
+            color: white;
+        }
+
+        .dark .platform-filter.active {
+            background-color: white;
+            color: var(--dark-gray);
+        }
+
+        .double-tap-heart {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            color: white;
+            filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.5));
+            transition: transform 0.3s, opacity 0.3s;
+        }
+
+        .double-tap-heart.active {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        @media (max-width: 640px) {
+            .story-circle {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body class="text-dark-gray">
+    <!-- Mobile Header -->
+    <header class="md:hidden bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-10">
+        <div class="flex justify-between items-center px-4 py-3">
+            <h1 class="logo-font text-3xl">Mentor</h1>
+            <div class="flex items-center space-x-4">
+                <button>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                </button>
+                <button>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Desktop Layout -->
+    <div class="flex h-screen">
+        <!-- Sidebar Navigation (Desktop Only) -->
+        <aside class="hidden md:flex w-64 bg-white dark:bg-gray-900 shadow-md flex-col h-full">
+            <div class="p-4">
+                <h1 class="logo-font text-3xl">Mentor</h1>
+            </div>
+            <nav class="flex-1 px-2 py-4 space-y-2">
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Social Feed
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                    Todo List
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    Projects
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Pomodoro
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                    Community
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    </svg>
+                    Achievements
+                </a>
+            </nav>
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-medium">
+                        JD
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium">John Doe</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Level 12 • Web Dev</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 py-6">
+                <!-- Content Type Tabs -->
+                <div class="flex justify-between border-b border-gray-200 dark:border-gray-700 mb-6">
+                    <div class="flex space-x-8">
+                        <button class="py-4 px-1 tab-active">
+                            Posts
+                        </button>
+                        <button class="py-4 px-1 tab-inactive">
+                            Reels
+                        </button>
+                        <button class="py-4 px-1 tab-inactive">
+                            Threads
+                        </button>
+                    </div>
+                    <div class="flex items-center">
+                        <button class="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Platform Filters -->
+                <div class="flex space-x-2 overflow-x-auto pb-4 mb-6">
+                    <button class="platform-filter active">
+                        All
+                    </button>
+                    <button class="platform-filter">
+                        Instagram
+                    </button>
+                    <button class="platform-filter">
+                        TikTok
+                    </button>
+                    <button class="platform-filter">
+                        Pinterest
+                    </button>
+                    <button class="platform-filter">
+                        Reddit
+                    </button>
+                    <button class="platform-filter">
+                        Quora
+                    </button>
+                </div>
+
+                <!-- Stories Section -->
+                <div class="mb-6">
+                    <div class="flex space-x-4 overflow-x-auto pb-2">
+                        <div class="flex flex-col items-center">
+                            <div class="story-circle mb-2">
+                                <div class="story-circle-inner">
+                                    <img src="https://via.placeholder.com/70" alt="Your Story" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <span class="text-xs font-medium">Your Story</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="story-circle mb-2">
+                                <div class="story-circle-inner">
+                                    <img src="https://via.placeholder.com/70" alt="WebDev" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <span class="text-xs font-medium">WebDev</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="story-circle mb-2">
+                                <div class="story-circle-inner">
+                                    <img src="https://via.placeholder.com/70" alt="UX_Tips" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <span class="text-xs font-medium">UX_Tips</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="story-circle mb-2">
+                                <div class="story-circle-inner">
+                                    <img src="https://via.placeholder.com/70" alt="Python" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <span class="text-xs font-medium">Python</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="story-circle mb-2">
+                                <div class="story-circle-inner">
+                                    <img src="https://via.placeholder.com/70" alt="ReactJS" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <span class="text-xs font-medium">ReactJS</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="story-circle mb-2">
+                                <div class="story-circle-inner">
+                                    <img src="https://via.placeholder.com/70" alt="CSS_Art" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <span class="text-xs font-medium">CSS_Art</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Posts Feed -->
+                <div class="space-y-6">
+                    <!-- Post 1 -->
+                    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden">
+                        <!-- Post Header -->
+                        <div class="flex items-center justify-between p-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full overflow-hidden">
+                                    <img src="https://via.placeholder.com/40" alt="WebDevSimplified" class="w-full h-full object-cover">
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-semibold">WebDevSimplified</p>
+                                    <div class="flex items-center">
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">Instagram</span>
+                                        <span class="mx-1 text-gray-500 dark:text-gray-400">•</span>
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">2h ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="text-gray-500 dark:text-gray-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Post Content -->
+                        <div class="relative">
+                            <img src="https://via.placeholder.com/600x400" alt="Post content" class="w-full">
+                            <div class="double-tap-heart">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Post Actions -->
+                        <div class="p-4">
+                            <div class="flex justify-between mb-2">
+                                <div class="flex space-x-2">
+                                    <button class="post-action-btn">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                        </svg>
+                                    </button>
+                                    <button class="post-action-btn">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                        </svg>
+                                    </button>
+                                    <button class="post-action-btn">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <button class="post-action-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <!-- Likes -->
+                            <p class="text-sm font-semibold mb-1">1,245 likes</p>
+
+                            <!-- Caption -->
+                            <p class="text-sm mb-2">
+                                <span class="font-semibold">WebDevSimplified</span> 
+                                Here's a quick CSS tip for creating responsive layouts without media queries! Using CSS Grid with auto-fit and minmax is a game changer for modern web development. #WebDevelopment #CSSGrid #ResponsiveDesign
+                            </p>
+
+                            <!-- Comments -->
+                            <button class="text-sm text-gray-500 dark:text-gray-400 mb-2">View all 87 comments</button>
+                            <div class="space-y-1">
+                                <p class="text-sm">
+                                    <span class="font-semibold">codingwizard</span> 
+                                    This is so helpful! I've been struggling with this exact problem.
+                                </p>
+                                <p class="text-sm">
+                                    <span class="font-semibold">css_master</span> 
+                                    Great tip! I'd also recommend checking out CSS subgrid for even more flexibility.
+                                </p>
+                            </div>
+
+                            <!-- Add Comment -->
+                            <div class="mt-3 flex items-center">
+                                <input type="text" placeholder="Add a comment..." class="flex-1 bg-transparent text-sm border-none focus:ring-0 outline-none">
+                                <button class="text-sm font-semibold text-blue-500 dark:text-blue-400">Post</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Post 2 -->
+                    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden">
+                        <!-- Post Header -->
+                        <div class="flex items-center justify-between p-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full overflow-hidden">
+                                    <img src="https://via.placeholder.com/40" alt="UX_Collective" class="w-full h-full object-cover">
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-semibold">UX_Collective</p>
+                                    <div class="flex items-center">
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">Pinterest</span>
+                                        <span class="mx-1 text-gray-500 dark:text-gray-400">•</span>
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">5h ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="text-gray-500 dark:text-gray-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Post Content -->
+                        <div class="relative">
+                            <img src="https://via.placeholder.com/600x800" alt="Post content" class="w-full">
+                            <div class="double-tap-heart">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Post Actions -->
+                        <div class="p-4">
+                            <div class="flex justify-between mb-2">
+                                <div class="flex space-x-2">
+                                    <button class="post-action-btn">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                        </svg>
+                                    </button>
+                                    <button class="post-action-btn">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                        </svg>
+                                    </button>
+                                    <button class="post-action-btn">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <button class="post-action-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <!-- Likes -->
+                            <p class="text-sm font-semibold mb-1">3,782 likes</p>
+
+                            <!-- Caption -->
+                            <p class="text-sm mb-2">
+                                <span class="font-semibold">UX_Collective</span> 
+                                Color psychology in UI design: How different colors affect user behavior and emotions. Swipe to see the full infographic! #UXDesign #UIDesign #ColorTheory
+                            </p>
+
+                            <!-- Comments -->
+                            <button class="text-sm text-gray-500 dark:text-gray-400 mb-2">View all 156 comments</button>
+                            <div class="space-y-1">
+                                <p class="text-sm">
+                                    <span class="font-semibold">design_thinker</span> 
+                                    This is such a valuable resource! Saving this for my next project.
+                                </p>
+                                <p class="text-sm">
+                                    <span class="font-semibold">creative_mind</span> 
+                                    I've been using blue for my finance app, but maybe I should reconsider based on this!
+                                </p>
+                            </div>
+
+                            <!-- Add Comment -->
+                            <div class="mt-3 flex items-center">
+                                <input type="text" placeholder="Add a comment..." class="flex-1 bg-transparent text-sm border-none focus:ring-0 outline-none">
+                                <button class="text-sm font-semibold text-blue-500 dark:text-blue-400">Post</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Post 3 -->
+                    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden">
+                        <!-- Post Header -->
+                        <div class="flex items-center justify-between p-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full overflow-hidden">
+                                    <img src="https://via.placeholder.com/40" alt="Python_Community" class="w-full h-full object-cover">
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-semibold">Python_Community</p>
+                                    <div class="flex items-center">
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">Reddit</span>
+                                        <span class="mx-1 text-gray-500 dark:text-gray-400">•</span>
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">12h ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="text-gray-500 dark:text-gray-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Post Content (Text Only) -->
+                        <div class="px-4 py-2">
+                            <p class="text-sm mb-4">
+                                What's your favorite Python library for data visualization and why? I've been using Matplotlib for years, but I'm curious about what others are using these days. I've heard good things about Plotly and Seaborn.
+                            </p>
+                            <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg">
+                                <p class="text-sm font-medium mb-1">Top Comment</p>
+                                <p class="text-sm">
+                                    Definitely check out Plotly if you haven't already. The interactive visualizations are amazing for exploratory data analysis, and it works great in Jupyter notebooks. Seaborn is also excellent if you want something with better defaults than Matplotlib but with a similar API.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Post Actions -->
+                        <div class="p-4">
+                            <div class="flex justify-between mb-2">
+                                <div class="flex space-x-2">
+                                    <button class="post-action-btn">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                                        </svg>
+                                    </button>
+                                    <span class="text-sm font-medium">423</span>
+                                    <button class="post-action-btn">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="post-action-btn">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                        </svg>
+                                    </button>
+                                    <span class="text-sm font-medium">78</span>
+                                </div>
+                                <button class="post-action-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <!-- Add Comment -->
+                            <div class="mt-3 flex items-center">
+                                <input type="text" placeholder="Add a comment..." class="flex-1 bg-transparent text-sm border-none focus:ring-0 outline-none">
+                                <button class="text-sm font-semibold text-blue-500 dark:text-blue-400">Post</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Load More -->
+                    <button class="w-full py-3 text-sm font-medium text-blue-500 dark:text-blue-400 bg-white dark:bg-gray-900 rounded-xl shadow-sm">
+                        Load More
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex justify-around z-10">
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <span class="text-xs mt-1">Home</span>
+        </a>
+        <a href="#" class="bottom-nav-item text-indigo-600 dark:text-indigo-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span class="text-xs mt-1">Social</span>
+        </a>
+        <a href="#" class="bottom-nav-item">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center -mt-5 shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+            </div>
+        </a>
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            <span class="text-xs mt-1">Activity</span>
+        </a>
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <div class="relative">
+                <img class="h-6 w-6 rounded-full" src="https://via.placeholder.com/24" alt="Profile">
+            </div>
+            <span class="text-xs mt-1">Profile</span>
+        </a>
+    </nav>
+
+    <script>
+        // This would be implemented with a proper framework like React
+        // Just showing the structure here
+        document.addEventListener('DOMContentLoaded', function() {
+            // Double tap to like functionality would be implemented here
+            const posts = document.querySelectorAll('.double-tap-heart');
+            posts.forEach(post => {
+                post.parentElement.addEventListener('dblclick', function() {
+                    post.classList.add('active');
+                    setTimeout(() => {
+                        post.classList.remove('active');
+                    }, 1000);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor - Learning Path</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Grand+Hotel&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(45deg, #833AB4, #FD1D1D, #FCB045);
+            --primary-blue: #0A66C2;
+            --primary-black: #000000;
+            --vibrant-pink: #FF3366;
+            --vibrant-blue: #00F2EA;
+            --vibrant-purple: #5851DB;
+            --vibrant-red: #FE2C55;
+            --dark-gray: #262626;
+            --medium-gray: #8E8E8E;
+            --light-gray: #EFEFEF;
+            --off-white: #FAFAFA;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--off-white);
+        }
+
+        .dark {
+            --off-white: #121212;
+            --light-gray: #1E1E1E;
+            --medium-gray: #B0B0B0;
+            --dark-gray: #FFFFFF;
+        }
+
+        .logo-font {
+            font-family: 'Grand Hotel', cursive;
+        }
+
+        .gradient-bg {
+            background: var(--primary-gradient);
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 0;
+        }
+
+        .learning-card {
+            transition: all 0.3s ease;
+        }
+
+        .learning-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            background-color: var(--light-gray);
+        }
+
+        .progress-value {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .tab-active {
+            color: var(--dark-gray);
+            border-bottom: 2px solid var(--dark-gray);
+            font-weight: 600;
+        }
+
+        .dark .tab-active {
+            color: white;
+            border-bottom: 2px solid white;
+        }
+
+        .tab-inactive {
+            color: var(--medium-gray);
+            border-bottom: 2px solid transparent;
+        }
+
+        .step-indicator {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .step-complete {
+            background-color: #10B981;
+            color: white;
+        }
+
+        .step-current {
+            background-color: #4F46E5;
+            color: white;
+        }
+
+        .step-incomplete {
+            background-color: #F3F4F6;
+            color: #6B7280;
+        }
+
+        .dark .step-incomplete {
+            background-color: #374151;
+            color: #D1D5DB;
+        }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+        }
+
+        .line-complete {
+            background-color: #10B981;
+        }
+
+        .line-incomplete {
+            background-color: #F3F4F6;
+        }
+
+        .dark .line-incomplete {
+            background-color: #374151;
+        }
+
+        .resource-card {
+            transition: all 0.2s ease;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .badge {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .search-input {
+            border-radius: 9999px;
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            background-color: #F3F4F6;
+            border: none;
+            outline: none;
+            width: 100%;
+        }
+
+        .dark .search-input {
+            background-color: #374151;
+            color: #F9FAFB;
+        }
+
+        .search-input:focus {
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9CA3AF;
+        }
+
+        @media (max-width: 640px) {
+            .learning-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="text-dark-gray">
+    <!-- Mobile Header -->
+    <header class="md:hidden bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-10">
+        <div class="flex justify-between items-center px-4 py-3">
+            <h1 class="logo-font text-3xl">Mentor</h1>
+            <div class="flex items-center space-x-4">
+                <button>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                </button>
+                <button>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Desktop Layout -->
+    <div class="flex h-screen">
+        <!-- Sidebar Navigation (Desktop Only) -->
+        <aside class="hidden md:flex w-64 bg-white dark:bg-gray-900 shadow-md flex-col h-full">
+            <div class="p-4">
+                <h1 class="logo-font text-3xl">Mentor</h1>
+            </div>
+            <nav class="flex-1 px-2 py-4 space-y-2">
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Social Feed
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    Learning Paths
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                    Todo List
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    Projects
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Pomodoro
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    Messages
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                    </svg>
+                    Voice Rooms
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Profile
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    </svg>
+                    Achievements
+                </a>
+            </nav>
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-medium">
+                        JD
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium">John Doe</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Level 12 • Web Dev</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+                <!-- Header with Actions -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
+                    <div>
+                        <h1 class="text-2xl font-bold mb-1">Learning Paths</h1>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Structured learning journeys to master new skills</p>
+                    </div>
+                    <div class="flex items-center space-x-2 mt-4 sm:mt-0">
+                        <button class="flex items-center px-3 py-2 bg-white dark:bg-gray-900 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                            </svg>
+                            Filter
+                        </button>
+                        <button class="flex items-center px-3 py-2 bg-indigo-600 rounded-lg shadow-sm text-sm font-medium text-white hover:bg-indigo-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                            Create Custom Path
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="mb-6">
+                    <div class="relative">
+                        <div class="search-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <input type="text" placeholder="Search for learning paths, skills, or topics" class="search-input">
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="mb-6">
+                    <div class="flex border-b border-gray-200 dark:border-gray-700">
+                        <button class="py-4 px-6 tab-active">
+                            My Paths
+                        </button>
+                        <button class="py-4 px-6 tab-inactive">
+                            Recommended
+                        </button>
+                        <button class="py-4 px-6 tab-inactive">
+                            Popular
+                        </button>
+                        <button class="py-4 px-6 tab-inactive">
+                            Completed
+                        </button>
+                    </div>
+                </div>
+
+                <!-- In Progress Learning Paths -->
+                <div class="mb-8">
+                    <h2 class="text-lg font-semibold mb-4">In Progress</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 learning-grid">
+                        <!-- Learning Path Card 1 -->
+                        <div class="learning-card bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden">
+                            <div class="relative">
+                                <img src="https://via.placeholder.com/400x200" alt="Learning Path Cover" class="w-full h-40 object-cover">
+                                <div class="absolute top-3 right-3 bg-indigo-600 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                                    In Progress
+                                </div>
+                            </div>
+                            <div class="p-5">
+                                <h3 class="font-semibold text-lg mb-1">Modern Web Development</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Master React, Node.js, and modern web technologies</p>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium">Progress</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">65%</span>
+                                </div>
+                                <div class="progress-bar mb-4">
+                                    <div class="progress-value bg-indigo-600" style="width: 65%"></div>
+                                </div>
+                                <div class="flex justify-between items-center mb-4">
+                                    <div class="flex items-center">
+                                        <img src="https://via.placeholder.com/32" alt="Creator" class="w-6 h-6 rounded-full mr-2">
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">By Michael Chen</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-500 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                        </svg>
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">4.9 (128)</span>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2 mb-4">
+                                    <span class="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded-full text-xs">React</span>
+                                    <span class="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-xs">Node.js</span>
+                                    <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-xs">Web Dev</span>
+                                </div>
+                                <button class="w-full py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">
+                                    Continue Learning
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Learning Path Card 2 -->
+                        <div class="learning-card bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden">
+                            <div class="relative">
+                                <img src="https://via.placeholder.com/400x200" alt="Learning Path Cover" class="w-full h-40 object-cover">
+                                <div class="absolute top-3 right-3 bg-indigo-600 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                                    In Progress
+                                </div>
+                            </div>
+                            <div class="p-5">
+                                <h3 class="font-semibold text-lg mb-1">UI/UX Design Fundamentals</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Learn the principles of user interface and experience design</p>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium">Progress</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">30%</span>
+                                </div>
+                                <div class="progress-bar mb-4">
+                                    <div class="progress-value bg-indigo-600" style="width: 30%"></div>
+                                </div>
+                                <div class="flex justify-between items-center mb-4">
+                                    <div class="flex items-center">
+                                        <img src="https://via.placeholder.com/32" alt="Creator" class="w-6 h-6 rounded-full mr-2">
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">By Sarah Johnson</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-500 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                        </svg>
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">4.8 (95)</span>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2 mb-4">
+                                    <span class="px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-full text-xs">UI/UX</span>
+                                    <span class="px-2 py-1 bg-pink-100 dark:bg-pink-900 text-pink-800 dark:text-pink-200 rounded-full text-xs">Design</span>
+                                    <span class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded-full text-xs">Figma</span>
+                                </div>
+                                <button class="w-full py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">
+                                    Continue Learning
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Learning Path Card 3 -->
+                        <div class="learning-card bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden">
+                            <div class="relative">
+                                <img src="https://via.placeholder.com/400x200" alt="Learning Path Cover" class="w-full h-40 object-cover">
+                                <div class="absolute top-3 right-3 bg-indigo-600 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                                    In Progress
+                                </div>
+                            </div>
+                            <div class="p-5">
+                                <h3 class="font-semibold text-lg mb-1">Data Science Essentials</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Introduction to data analysis, visualization, and machine learning</p>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium">Progress</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">15%</span>
+                                </div>
+                                <div class="progress-bar mb-4">
+                                    <div class="progress-value bg-indigo-600" style="width: 15%"></div>
+                                </div>
+                                <div class="flex justify-between items-center mb-4">
+                                    <div class="flex items-center">
+                                        <img src="https://via.placeholder.com/32" alt="Creator" class="w-6 h-6 rounded-full mr-2">
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">By David Kim</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-500 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                        </svg>
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">4.7 (82)</span>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2 mb-4">
+                                    <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-xs">Python</span>
+                                    <span class="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-xs">Data</span>
+                                    <span class="px-2 py-1 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded-full text-xs">ML</span>
+                                </div>
+                                <button class="w-full py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">
+                                    Continue Learning
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Learning Path Detail -->
+                <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden mb-8">
+                    <div class="relative">
+                        <img src="https://via.placeholder.com/1200x300" alt="Learning Path Cover" class="w-full h-48 md:h-64 object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                            <div class="text-center text-white p-4">
+                                <h2 class="text-2xl font-bold mb-2">Modern Web Development</h2>
+                                <p class="text-sm md:text-base max-w-2xl">Master React, Node.js, and modern web technologies to build professional web applications</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+                            <div class="flex items-center mb-4 md:mb-0">
+                                <img src="https://via.placeholder.com/40" alt="Creator" class="w-10 h-10 rounded-full mr-3">
+                                <div>
+                                    <p class="font-medium">Michael Chen</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Senior Web Developer at TechCorp</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                    </svg>
+                                    <span class="text-sm font-medium">4.9</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400 ml-1">(128 reviews)</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">25 hours</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">2,456 learners</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium">Your Progress</span>
+                                <span class="text-sm text-gray-500 dark:text-gray-400">65% Complete</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-value bg-indigo-600" style="width: 65%"></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold mb-4">Path Overview</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                                This comprehensive learning path will take you from the basics of modern web development to building complex, production-ready applications. You'll learn React for frontend, Node.js for backend, and essential tools and practices used by professional developers.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded-full text-xs">React</span>
+                                <span class="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-xs">Node.js</span>
+                                <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-xs">JavaScript</span>
+                                <span class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded-full text-xs">API</span>
+                                <span class="px-2 py-1 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded-full text-xs">Redux</span>
+                                <span class="px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-full text-xs">MongoDB</span>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <button class="flex items-center text-sm text-indigo-600 dark:text-indigo-400 font-medium">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                    </svg>
+                                    Share
+                                </button>
+                                <button class="flex items-center text-sm text-indigo-600 dark:text-indigo-400 font-medium">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                    </svg>
+                                    Save
+                                </button>
+                                <button class="flex items-center text-sm text-indigo-600 dark:text-indigo-400 font-medium">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    Notes
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold mb-4">Path Progress</h3>
+                            <div class="flex items-center mb-6">
+                                <div class="step-indicator step-complete">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div class="step-line line-complete"></div>
+                                <div class="step-indicator step-complete">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div class="step-line line-complete"></div>
+                                <div class="step-indicator step-current">
+                                    3
+                                </div>
+                                <div class="step-line line-incomplete"></div>
+                                <div class="step-indicator step-incomplete">
+                                    4
+                                </div>
+                                <div class="step-line line-incomplete"></div>
+                                <div class="step-indicator step-incomplete">
+                                    5
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <!-- Module 1 (Completed) -->
+                                <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                                    <div class="flex items-start">
+                                        <div class="badge bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 mr-3 mt-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between">
+                                                <h4 class="font-medium">Module 1: JavaScript Fundamentals</h4>
+                                                <span class="text-xs text-green-600 dark:text-green-400 font-medium">Completed</span>
+                                            </div>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Modern JavaScript features, ES6+, and core concepts</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Module 2 (Completed) -->
+                                <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                                    <div class="flex items-start">
+                                        <div class="badge bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 mr-3 mt-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between">
+                                                <h4 class="font-medium">Module 2: React Basics</h4>
+                                                <span class="text-xs text-green-600 dark:text-green-400 font-medium">Completed</span>
+                                            </div>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Components, props, state, and React hooks</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Module 3 (Current) -->
+                                <div class="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 rounded-lg p-4">
+                                    <div class="flex items-start">
+                                        <div class="badge bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 mr-3 mt-1">
+                                            3
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between">
+                                                <h4 class="font-medium">Module 3: Advanced React</h4>
+                                                <span class="text-xs text-indigo-600 dark:text-indigo-400 font-medium">In Progress (65%)</span>
+                                            </div>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Context API, Redux, performance optimization, and advanced patterns</p>
+                                            <div class="mt-3">
+                                                <div class="progress-bar">
+                                                    <div class="progress-value bg-indigo-600" style="width: 65%"></div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                <div class="resource-card bg-white dark:bg-gray-900 rounded-lg p-3 flex items-center">
+                                                    <div class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center mr-3">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                        </svg>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <h5 class="text-sm font-medium">Redux Fundamentals</h5>
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400">Video • 45 min</p>
+                                                    </div>
+                                                </div>
+                                                <div class="resource-card bg-white dark:bg-gray-900 rounded-lg p-3 flex items-center">
+                                                    <div class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mr-3">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                                        </svg>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <h5 class="text-sm font-medium">Practical Exercises</h5>
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400">Practice • 1 hour</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button class="mt-4 w-full py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">
+                                                Continue Module
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Module 4 (Upcoming) -->
+                                <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                                    <div class="flex items-start">
+                                        <div class="badge bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 mr-3 mt-1">
+                                            4
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between">
+                                                <h4 class="font-medium">Module 4: Node.js & Express</h4>
+                                                <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Upcoming</span>
+                                            </div>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Server-side JavaScript, RESTful APIs, and Express framework</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Module 5 (Upcoming) -->
+                                <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                                    <div class="flex items-start">
+                                        <div class="badge bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 mr-3 mt-1">
+                                            5
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between">
+                                                <h4 class="font-medium">Module 5: Full Stack Integration</h4>
+                                                <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Upcoming</span>
+                                            </div>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Connecting React frontend with Node.js backend, authentication, and deployment</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold mb-4">Learning Community</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                                    <h4 class="font-medium mb-3">Discussion Forum</h4>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Join the conversation with other learners and instructors</p>
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                            </svg>
+                                            <span class="text-sm text-gray-500 dark:text-gray-400">128 discussions</span>
+                                        </div>
+                                        <button class="text-sm text-indigo-600 dark:text-indigo-400 font-medium">
+                                            View Forum
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                                    <h4 class="font-medium mb-3">Study Group</h4>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Weekly voice sessions with peers learning the same path</p>
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span class="text-sm text-gray-500 dark:text-gray-400">Next: Apr 8, 2025</span>
+                                        </div>
+                                        <button class="text-sm text-indigo-600 dark:text-indigo-400 font-medium">
+                                            Join Group
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4">Recommended Next</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="learning-card bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden">
+                                    <div class="relative">
+                                        <img src="https://via.placeholder.com/400x200" alt="Learning Path Cover" class="w-full h-32 object-cover">
+                                    </div>
+                                    <div class="p-4">
+                                        <h3 class="font-medium text-base mb-1">Advanced React Patterns</h3>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Master advanced React techniques and patterns</p>
+                                        <div class="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            15 hours
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="learning-card bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden">
+                                    <div class="relative">
+                                        <img src="https://via.placeholder.com/400x200" alt="Learning Path Cover" class="w-full h-32 object-cover">
+                                    </div>
+                                    <div class="p-4">
+                                        <h3 class="font-medium text-base mb-1">GraphQL API Development</h3>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Build efficient APIs with GraphQL and Apollo</p>
+                                        <div class="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            12 hours
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="learning-card bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden">
+                                    <div class="relative">
+                                        <img src="https://via.placeholder.com/400x200" alt="Learning Path Cover" class="w-full h-32 object-cover">
+                                    </div>
+                                    <div class="p-4">
+                                        <h3 class="font-medium text-base mb-1">Web Security Fundamentals</h3>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Protect your web applications from common threats</p>
+                                        <div class="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            10 hours
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex justify-around z-10">
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <span class="text-xs mt-1">Home</span>
+        </a>
+        <a href="#" class="bottom-nav-item text-indigo-600 dark:text-indigo-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+            <span class="text-xs mt-1">Learn</span>
+        </a>
+        <a href="#" class="bottom-nav-item">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center -mt-5 shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+            </div>
+        </a>
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <span class="text-xs mt-1">Messages</span>
+        </a>
+        <a href="#" class="bottom-nav-item text-gray-500 dark:text-gray-400">
+            <div class="relative">
+                <img class="h-6 w-6 rounded-full" src="https://via.placeholder.com/24" alt="Profile">
+            </div>
+            <span class="text-xs mt-1">Profile</span>
+        </a>
+    </nav>
+
+    <script>
+        // This would be implemented with a proper framework like React
+        // Just showing the structure here
+    </script>
+</body>
+</html>
